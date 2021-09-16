@@ -10,9 +10,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.get('/api', (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello from API!')
 })
 
 app.listen(port, () => {
-  // console.log(`Example app listening at http://localhost:${port}`)   
+  // console.log(`Example app listening at http://localhost:${port}`)
 })
