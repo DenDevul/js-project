@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.get('/api', (req, res) => {
-  res.send('Hello from API!')
+  res.send('ОПА ЗДАРОВА!')
 })
 
 app.listen(port, () => {
