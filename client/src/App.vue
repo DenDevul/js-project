@@ -42,14 +42,13 @@
       :taskComplete="true"
     ></task>
     <div class="my-card">
+      <button>
+        <span>
+          <i class="far fa-square fa-3x"></i>
+        </span>
+      </button>
       <div class="task">
-        <button>
-          <span>
-            <i class="far fa-square fa-3x"></i>
-          </span>
-        </button>
-        <textarea v-if="isEditing" type="text" ref="edit"></textarea>
-        <p v-else ref="taskBody">5. Lorem ipsum dolor sit amet.</p>
+        <textarea readonly type="text" ref="edit" id="edit" >Lorem ipsum dolor sit amet.</textarea>
       </div>
       <div class="controls">
         <button v-if="!isEditing" @click="editTask">
@@ -74,46 +73,42 @@
 
 <script>
 import Task from "./components/Task.vue";
-import { nextTick } from "@vue/runtime-core";
-const axios = require("axios");
+// const axios = require("axios");
 
 export default {
   name: "App",
   data() {
     return {
-      isEditing: false
+      isEditing: false,
+      edit: undefined
     };
   },
   components: { Task },
   methods: {
-    async fetchApi() {
-      await axios.get("http://localhost:3000/api").then(response => {
-        this.data = response.data;
-      });
-    },
-    async editTask() {
-      let temp = this.$refs.taskBody.innerHTML;
-      let height = this.$refs.taskBody.offsetHeight
+    // async fetchApi() {
+    //   await axios.get("http://localhost:3000/api").then(response => {
+    //     this.data = response.data;
+    //   });
+    // },
+    editTask() {
+      this.edit.readOnly = false;
+      this.edit.focus()
       this.isEditing = true;
-      nextTick(() => {
-        this.$refs.edit.style.height = height + 'px'
-        this.$refs.edit.value = temp;
-        console.log(height);
-        console.log(this.$refs.edit.offsetHeight);
-      });
-      // console.log(document.getElementById('input'));
     },
-    async stopEdit() {
-      let temp = this.$refs.edit.value;
+    stopEdit() {
+      this.edit.readOnly = true;
       this.isEditing = false;
-      this.$nextTick(() => {
-        console.log(temp);
-        this.$refs.taskBody.innerHTML = temp;
-      });
+    },
+    onInput() {
+      this.edit.style.height = "auto";
+      this.edit.style.height = this.edit.scrollHeight + "px";
     }
   },
   mounted() {
-    // this.fetchApi();
+    this.edit = this.$refs.edit
+    this.edit.addEventListener('input', this.onInput, false);
+    this.edit.addEventListener('click', this.editTask, false)
+    this.edit.addEventListener('blur', this.stopEdit, false)
   }
 };
 </script>
@@ -121,7 +116,7 @@ export default {
 <style>
 .my-card {
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: end;
   min-height: 72px;
   width: 80vw;
@@ -132,17 +127,16 @@ export default {
   font-size: xx-large;
   font-weight: bold;
   color: var(--background-color);
-  padding-left: 1rem;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 1.5rem;
 }
 
 .task {
   display: flex;
   flex-grow: 1;
-}
-.task input {
-  flex-grow: 1;
-  font-weight: inherit;
-  color: inherit;
+  padding: 0 16px;
 }
 .task textarea {
   flex-grow: 1;
@@ -153,11 +147,13 @@ export default {
   resize: none;
   border: none;
   outline: none;
+  overflow: hidden;
+  cursor: default;
 }
 .controls {
-  min-width: 156px;
+  min-width: 104px;
+  justify-content: space-between;
   display: flex;
-  justify-content: space-evenly;
 }
 
 .my-card button {
