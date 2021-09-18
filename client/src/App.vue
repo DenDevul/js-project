@@ -21,92 +21,94 @@
         </span>
       </a>
     </div>
-    <div class="block card is-size-3">
-      <header class="card-header">
-        <p class="card-header-title has-text-weight-bold">
-          1. Lorem ipsum dolor sit amet.
-        </p>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-edit"></i>
+    <task
+      :taskId="1"
+      :taskName="'Lorem ipsum dolor sit amet.'"
+      :taskComplete="false"
+    ></task>
+    <task
+      :taskId="2"
+      :taskName="'Lorem ipsum dolor sit amet.'"
+      :taskComplete="false"
+    ></task>
+    <task
+      :taskId="3"
+      :taskName="'Lorem ipsum dolor sit amet.'"
+      :taskComplete="false"
+    ></task>
+    <task
+      :taskId="42"
+      :taskName="'Lorem ipsum dolor sit amet.'"
+      :taskComplete="true"
+    ></task>
+    <div class="my-card">
+      <div class="task">
+        <button>
+          <span>
+            <i class="far fa-square fa-3x"></i>
           </span>
         </button>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-times"></i>
+        <textarea v-if="isEditing" type="text" ref="edit"></textarea>
+        <p v-else ref="taskBody">5. Lorem ipsum dolor sit amet.</p>
+      </div>
+      <div class="controls">
+        <button v-if="!isEditing" @click="editTask">
+          <span>
+            <i class="far fa-edit fa-3x"></i>
           </span>
         </button>
-      </header>
-    </div>
-    <div class="block card is-size-3">
-      <header class="card-header">
-        <p class="card-header-title has-text-weight-bold">
-          1. Lorem ipsum dolor sit amet.
-        </p>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-edit"></i>
+        <button v-else @click="stopEdit">
+          <span>
+            <i class="far fa-edit fa-3x"></i>
           </span>
         </button>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-times"></i>
+        <button>
+          <span>
+            <i class="fas fa-times fa-3x"></i>
           </span>
         </button>
-      </header>
-    </div>
-    <div class="block card is-size-3">
-      <header class="card-header">
-        <p class="card-header-title has-text-weight-bold">
-          1. Lorem ipsum dolor sit amet.
-        </p>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-edit"></i>
-          </span>
-        </button>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-times"></i>
-          </span>
-        </button>
-      </header>
-    </div>
-    <div class="block card is-size-3">
-      <header class="card-header">
-        <p class="card-header-title has-text-weight-bold">
-          1. Lorem ipsum dolor sit amet.
-        </p>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-edit"></i>
-          </span>
-        </button>
-        <button class="card-header-icon">
-          <span class="icon is-medium">
-            <i class="fas fa-times"></i>
-          </span>
-        </button>
-      </header>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Task from "./components/Task.vue";
+import { nextTick } from "@vue/runtime-core";
 const axios = require("axios");
 
 export default {
   name: "App",
   data() {
     return {
-      data: []
+      isEditing: false
     };
   },
-  components: {},
+  components: { Task },
   methods: {
     async fetchApi() {
       await axios.get("http://localhost:3000/api").then(response => {
         this.data = response.data;
+      });
+    },
+    async editTask() {
+      let temp = this.$refs.taskBody.innerHTML;
+      let height = this.$refs.taskBody.offsetHeight
+      this.isEditing = true;
+      nextTick(() => {
+        this.$refs.edit.style.height = height + 'px'
+        this.$refs.edit.value = temp;
+        console.log(height);
+        console.log(this.$refs.edit.offsetHeight);
+      });
+      // console.log(document.getElementById('input'));
+    },
+    async stopEdit() {
+      let temp = this.$refs.edit.value;
+      this.isEditing = false;
+      this.$nextTick(() => {
+        console.log(temp);
+        this.$refs.taskBody.innerHTML = temp;
       });
     }
   },
@@ -117,6 +119,56 @@ export default {
 </script>
 
 <style>
+.my-card {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  min-height: 72px;
+  width: 80vw;
+  background-color: var(--primary-color);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
+    0 0 0 1px rgba(10, 10, 10, 0.02);
+  font-size: xx-large;
+  font-weight: bold;
+  color: var(--background-color);
+  padding-left: 1rem;
+}
+
+.task {
+  display: flex;
+  flex-grow: 1;
+}
+.task input {
+  flex-grow: 1;
+  font-weight: inherit;
+  color: inherit;
+}
+.task textarea {
+  flex-grow: 1;
+  font-weight: inherit;
+  color: inherit;
+  font-size: inherit;
+  background-color: inherit;
+  resize: none;
+  border: none;
+  outline: none;
+}
+.controls {
+  min-width: 156px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.my-card button {
+  border: none;
+  background-color: inherit;
+}
+
+button span {
+  color: var(--background-color);
+}
+
 :root {
   --primary-color: #eeb902;
   --background-color: #262626;
@@ -124,8 +176,6 @@ export default {
 }
 
 body {
-  margin: 0px;
-  padding: 0px;
   min-width: 100vw;
   min-height: 100vh;
   background-color: var(--background-color);
@@ -138,9 +188,6 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-}
-.card {
-  background-color: var(--primary-color);
 }
 
 body::-webkit-scrollbar {
