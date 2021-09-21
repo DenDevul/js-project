@@ -1,0 +1,23 @@
+:root {
+    --primary-color: #f1c40f;
+    --background-color: #262626;
+    --background-lighter: #424242;
+}
+
+body::-webkit-scrollbar {
+    width: 7px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--background-color);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--background-darker);
+    border-radius: 5px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
