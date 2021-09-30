@@ -1,32 +1,45 @@
 const { User } = require('../models/index');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
-  getUser: async (req, res) => {
-    const user = await User.findByPk(req.params.userId);
+  login: async (req, res) => {
+    const user = await User.findOne({
+      where: { email: req.body.email }
+    });
     if (user) {
-      res.json(user);
+      try {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+          const token = jwt.sign({id: user.id}, process.env.ACCESS_TOKEN_SECRET)
+          res.json(token)
+        } else {
+          res.send('Wrong password');
+        }
+      } catch (error) {
+        res.sendStatus(500);
+      }
     } else {
-      res.sendStatus(404);
+      res.sendStatus(400);
+    }
+  },
+
+  signup: async (req, res) => {
+    if (await User.findOne({ where: { email: req.body.email } })) {
+      res.status(400).send('user with that email already exists');
+    } else {
+      try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const user = await User.create({ email: req.body.email, password: hashedPassword });
+        res.status(201).json({id: user.id});
+      } catch (error) {
+        res.status(500).send(error);
+      }
     }
   },
 
   getUsers: async (req, res) => {
     const users = await User.findAll();
     res.json(users);
-  },
-
-  postUser: async (req, res) => {
-    const [_, created] = await User.findOrCreate({
-      where: {
-        email: req.body.user.email
-      },
-      defaults: req.body.user
-    });
-    if (created) {
-      res.sendStatus(201);
-    } else {
-      res.json('user already exists');
-    }
   },
 
   deleteUser: async (req, res) => {
@@ -42,10 +55,10 @@ module.exports = {
   putUser: async (req, res) => {
     const user = await User.findByPk(req.params.userId);
     if (user) {
-      await User.update(req.body.user, { where: { id: req.params.userId } });
-      res.sendStatus(200)
+      await User.update(req.body, { where: { id: req.params.userId } });
+      res.sendStatus(200);
     } else {
-      res.sendStatus(404)
+      res.sendStatus(404);
     }
   }
 };
