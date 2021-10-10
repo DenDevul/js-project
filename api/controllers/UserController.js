@@ -13,13 +13,13 @@ module.exports = {
           const token = jwt.sign({id: user.id}, process.env.ACCESS_TOKEN_SECRET)
           res.json(token)
         } else {
-          res.send('Wrong password');
+          res.status(401).send('Wrong password');
         }
       } catch (error) {
         res.sendStatus(500);
       }
     } else {
-      res.sendStatus(400);
+      res.status(401).json('user not found')
     }
   },
 

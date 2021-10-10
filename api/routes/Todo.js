@@ -3,14 +3,14 @@ const router = express.Router();
 const todo = require('../controllers/TodoController');
 const verifyToken = require('./verifyToken');
 
-router.get('/todos', verifyToken, todo.getTodos);
+router.get('/api/todos', verifyToken, todo.getTodos);
 
-router.post('/todo/create', verifyToken, todo.createTodo);
+router.post('/api/todo/create', verifyToken, todo.createTodo);
 
-// router.get('/todo/get/:todoId', verifyToken, todo.getTodo)
+// router.get('api/todo/get/:todoId', verifyToken, todo.getTodo)
 
-router.delete('/todo/delete/:todoId', verifyToken, todo.deleteTodo);
+router.delete('/api/todo/delete/:todoId', verifyToken, todo.deleteTodo);
 
-router.put('/todo/update/:todoId', verifyToken, todo.updateTodo);
+router.put('/api/todo/update/:todoId', verifyToken, todo.updateTodo);
 
 module.exports = router;
