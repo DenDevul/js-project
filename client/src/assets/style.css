@@ -1,9 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
 :root {
-    --primary-color: #f1c40f;
+    --primary-color: #00B05A;
     --primary-alt: #3498db;
-    --background-color: #262626;
+    --background-color: #212121;
     --background-lighter: #424242;
+}
+
+@font-face {
+    font-family: BlackberryJam;
+    src: url(BlackberryJam.ttf);
 }
 
 body {

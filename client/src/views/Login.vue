@@ -63,7 +63,6 @@ export default {
 
 <style>
 .login {
-  margin: auto;
   background-color: rgb(255 255 255 / 5%);
   box-shadow: 0 0 16px 2px #00000027;
   height: 250px;
